@@ -67,14 +67,15 @@ void TrackerMainWindow::on_actionStart_triggered()
 {
     if( !mCapture.isOpened() )
     {
+        mCapture.set(CV_CAP_PROP_FPS, 30.0);
         if( !mCapture.open( CV_CAP_ANY ) )
         {
             return;
         }
         else
         {
-            mCapture.set(CV_CAP_PROP_FPS, 30);
-            timerId = startTimer(0);
+//            mCapture.set(CV_CAP_PROP_FPS, 30);
+            timerId = startTimer(100);
         }
     }
 
