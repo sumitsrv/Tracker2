@@ -19,8 +19,8 @@ HEADERS  += \
 
 FORMS    += qtglwebcamdemo.ui
 
-#INCLUDEPATH += /usr/local/include/
-#LIBS += /usr/local/lib/*.so.2.4.8
+INCLUDEPATH += /usr/local/include/
+LIBS += /usr/local/lib/*.so.2.4.8
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 ANDROID_PACKAGE_INCLUDE_DIR = /mnt/Signi/Softwares/Linux/OpenCV-2.4.9-android-sdk/sdk/

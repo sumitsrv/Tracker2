@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <opencv2/highgui/highgui.hpp>
 #include <imagefiledialog.h>
+//#include <thread>
 #include "featuresmatcher.h"
 
 namespace Ui {
@@ -31,11 +32,14 @@ private:
     string fileRootPath;
     cv::Mat objectImg;
     cv::Mat sceneImg;
-    FeaturesMatcher featuresMatcher;
+    FeaturesMatcher *featuresMatcher;
     bool track;
+
+    void processFrame(Mat);
 
 protected:
     void timerEvent(QTimerEvent *event);
+    void timerEvent();
 };
 
 #endif // TRACKERMAINWINDOW_H

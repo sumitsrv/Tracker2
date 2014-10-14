@@ -14,7 +14,7 @@ bool ImageViewer::showImage( cv::Mat image )
         break;
     }
 
-    assert(_tmp.isContinuous());
+//    assert(_tmp.isContinuous());
     _qimage = QImage(_tmp.data, _tmp.cols, _tmp.rows, _tmp.cols*3, QImage::Format_RGB888);
 
     this->setFixedSize(image.cols, image.rows);

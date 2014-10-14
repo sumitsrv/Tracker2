@@ -11,17 +11,17 @@ class FeaturesMatcher
 public:
     FeaturesMatcher();
 
-    void prepMatcher(TrackerFeatures);
+    void prepMatcher(TrackerFeatures*);
     Mat getMatch(Mat);
 
-    TrackerFeatures sceneFeatures;
+    TrackerFeatures *sceneFeatures;
 
 private:
-    FlannBasedMatcher matcher;
+    FlannBasedMatcher *matcher;
     vector<vector<DMatch> > matches;
     vector<Mat> mask;
     int k;
-    TrackerFeatures objectFeatures;
+    TrackerFeatures *objectFeatures;
 };
 
 #endif // FEATURESMATCHER_H

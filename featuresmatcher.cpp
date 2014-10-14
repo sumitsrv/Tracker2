@@ -5,28 +5,28 @@ FeaturesMatcher::FeaturesMatcher()
 //#ifdef ANDROID
 //    matcher = FlannBasedMatcher (new flann::LshIndexParams(12, 12, 1), new flann::SearchParams(32));
 //#else
-    matcher = FlannBasedMatcher (new flann::CompositeIndexParams(5, 32, 11, cvflann::FLANN_CENTERS_RANDOM, 0.2), new flann::SearchParams(32));
+    matcher = new FlannBasedMatcher (new flann::CompositeIndexParams(5, 32, 11, cvflann::FLANN_CENTERS_RANDOM, 0.2), new flann::SearchParams(32));
 //#endif
     k = 2;
 }
 
-void FeaturesMatcher::prepMatcher(TrackerFeatures objectFeatures)
+void FeaturesMatcher::prepMatcher(TrackerFeatures *objectFeatures)
 {
-    matcher.clear();
+    matcher->clear();
     vector<Mat> descriptorVector;
-    descriptorVector.push_back(objectFeatures.descriptors);
-    matcher.add(descriptorVector);
-    matcher.train();
+    descriptorVector.push_back(objectFeatures->descriptors);
+    matcher->add(descriptorVector);
+    matcher->train();
     this->objectFeatures = objectFeatures;
 }
 
 Mat FeaturesMatcher::getMatch(Mat scene_img)
 {
-    matcher.knnMatch(sceneFeatures.descriptors, matches, k, mask, false);
+    matcher->knnMatch(sceneFeatures->descriptors, matches, k, mask, false);
 
     double max_dist = 0; double min_dist = 100;
 
-    for( int i = 0; i < sceneFeatures.descriptors.rows; i++ )
+    for( int i = 0; i < sceneFeatures->descriptors.rows; i++ )
     {
         vector<DMatch> match = matches[i];
         for(int j = 0; j< k; j++){
@@ -38,7 +38,7 @@ Mat FeaturesMatcher::getMatch(Mat scene_img)
 
     vector<DMatch> good_matches;
 
-    for( int i = 0; i < sceneFeatures.descriptors.rows; i++ )
+    for( int i = 0; i < sceneFeatures->descriptors.rows; i++ )
     {
         vector<DMatch> match = matches[i];
         for(int j=0; j<k; j++){
@@ -56,8 +56,8 @@ Mat FeaturesMatcher::getMatch(Mat scene_img)
 
     for( unsigned int i = 0; i < good_matches.size(); i++ )
     {
-        obj.push_back( objectFeatures.keyPoints[ good_matches[i].trainIdx ].pt );
-        scene.push_back( sceneFeatures.keyPoints[ good_matches[i].queryIdx ].pt );
+        obj.push_back( objectFeatures->keyPoints[ good_matches[i].trainIdx ].pt );
+        scene.push_back( sceneFeatures->keyPoints[ good_matches[i].queryIdx ].pt );
     }
 
     std::vector<uchar> outlier_mask;
@@ -70,9 +70,9 @@ Mat FeaturesMatcher::getMatch(Mat scene_img)
         //-- Get the corners from the image_1 ( the object to be "detected" )
         std::vector<Point2f> obj_corners(4);
         obj_corners[0] = cvPoint(0,0);
-        obj_corners[1] = cvPoint( Mat(objectFeatures.image).cols, 0 );
-        obj_corners[2] = cvPoint( Mat(objectFeatures.image).cols, Mat(objectFeatures.image).rows );
-        obj_corners[3] = cvPoint( 0, Mat(objectFeatures.image).rows );
+        obj_corners[1] = cvPoint( Mat(objectFeatures->image).cols, 0 );
+        obj_corners[2] = cvPoint( Mat(objectFeatures->image).cols, Mat(objectFeatures->image).rows );
+        obj_corners[3] = cvPoint( 0, Mat(objectFeatures->image).rows );
         std::vector<Point2f> scene_corners(4);
 
         perspectiveTransform(obj_corners, scene_corners, H);

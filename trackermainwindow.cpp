@@ -14,7 +14,7 @@ TrackerMainWindow::TrackerMainWindow(QWidget *parent) :
 #else
     fileRootPath = "";
 #endif
-    featuresMatcher = FeaturesMatcher();
+    featuresMatcher = new FeaturesMatcher();
     track = false;
     ui->setupUi(this);
 }
@@ -30,20 +30,16 @@ void TrackerMainWindow::timerEvent(QTimerEvent *event)
     mCapture >> captureImg;
 
     cvtColor(captureImg, sceneImg, CV_BGR2GRAY, 1);
-    TrackerFeatures sceneFeatures = TrackerFeatures();
+    TrackerFeatures *sceneFeatures = new TrackerFeatures();
 
-    sceneFeatures.detect(sceneImg);
-    sceneFeatures.image = sceneImg;
+    sceneFeatures->detect(sceneImg);
+    sceneFeatures->image = sceneImg;
 
-    featuresMatcher.sceneFeatures = sceneFeatures;
+    featuresMatcher->sceneFeatures = sceneFeatures;
 
-    if(track){
-        Mat drawMatch = featuresMatcher.getMatch(captureImg);
-        ui->imageViewer->showImage(drawMatch);
-    }
-    else{
-        ui->imageViewer->showImage( captureImg );
-    }
+//    processFrame(captureImg);
+    std::thread first (&TrackerMainWindow::processFrame, this, captureImg);
+    first.detach();
 }
 
 void TrackerMainWindow::on_actionFileBrowse_triggered()
@@ -54,12 +50,12 @@ void TrackerMainWindow::on_actionFileBrowse_triggered()
     if(!objectRelativePath.empty()){
         objectImg = cv::imread(objectRelativePath, CV_LOAD_IMAGE_GRAYSCALE);
 
-        TrackerFeatures objectFeatures = TrackerFeatures();
-        objectFeatures.detect(objectImg);
-        objectFeatures.image = objectImg.clone();
+        TrackerFeatures *objectFeatures = new TrackerFeatures();
+        objectFeatures->detect(objectImg);
+        objectFeatures->image = objectImg.clone();
 
         ui->imageViewer->showImage( objectImg );
-        featuresMatcher.prepMatcher(objectFeatures);
+        featuresMatcher->prepMatcher(objectFeatures);
     }
 }
 
@@ -68,14 +64,16 @@ void TrackerMainWindow::on_actionStart_triggered()
     if( !mCapture.isOpened() )
     {
         mCapture.set(CV_CAP_PROP_FPS, 30.0);
+        mCapture.set(CV_CAP_PROP_FRAME_HEIGHT, 480.0);
+        mCapture.set(CV_CAP_PROP_FRAME_WIDTH, 640.0);
+
         if( !mCapture.open( CV_CAP_ANY ) )
         {
             return;
         }
         else
         {
-//            mCapture.set(CV_CAP_PROP_FPS, 30);
-            timerId = startTimer(100);
+            timerId = startTimer(10);
         }
     }
 
@@ -95,4 +93,15 @@ void TrackerMainWindow::on_actionStop_triggered()
 void TrackerMainWindow::on_actionTrack_triggered()
 {
     track = true;
+}
+
+void TrackerMainWindow::processFrame(Mat captureImg)
+{
+    if(track){
+        Mat drawMatch = featuresMatcher->getMatch(captureImg);
+        ui->imageViewer->showImage(drawMatch);
+    }
+    else{
+        ui->imageViewer->showImage( captureImg );
+    }
 }
