@@ -37,9 +37,9 @@ void TrackerMainWindow::timerEvent(QTimerEvent *event)
 
     featuresMatcher->sceneFeatures = sceneFeatures;
 
-//    processFrame(captureImg);
-    std::thread first (&TrackerMainWindow::processFrame, this, captureImg);
-    first.detach();
+    processFrame(captureImg);
+//    std::thread first (&TrackerMainWindow::processFrame, this, captureImg);
+//    first.detach();
 }
 
 void TrackerMainWindow::on_actionFileBrowse_triggered()
@@ -48,13 +48,15 @@ void TrackerMainWindow::on_actionFileBrowse_triggered()
     string objectRelativePath = fileDialog->getFile();
 
     if(!objectRelativePath.empty()){
-        objectImg = cv::imread(objectRelativePath, CV_LOAD_IMAGE_GRAYSCALE);
+        objectImg.upload(cv::imread(objectRelativePath, CV_LOAD_IMAGE_GRAYSCALE));
 
         TrackerFeatures *objectFeatures = new TrackerFeatures();
         objectFeatures->detect(objectImg);
         objectFeatures->image = objectImg.clone();
 
-        ui->imageViewer->showImage( objectImg );
+        Mat imgV;
+        objectImg.download(imgV);
+        ui->imageViewer->showImage( imgV );
         featuresMatcher->prepMatcher(objectFeatures);
     }
 }

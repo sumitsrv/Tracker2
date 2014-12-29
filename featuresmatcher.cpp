@@ -5,7 +5,8 @@ FeaturesMatcher::FeaturesMatcher()
 //#ifdef ANDROID
 //    matcher = FlannBasedMatcher (new flann::LshIndexParams(12, 12, 1), new flann::SearchParams(32));
 //#else
-    matcher = new FlannBasedMatcher (new flann::CompositeIndexParams(5, 32, 11, cvflann::FLANN_CENTERS_RANDOM, 0.2), new flann::SearchParams(32));
+//    matcher = new FlannBasedMatcher (new flann::CompositeIndexParams(5, 32, 11, cvflann::FLANN_CENTERS_RANDOM, 0.2), new flann::SearchParams(32));
+    matcher = new BFMatcher_GPU(NORM_L2);
 //#endif
     k = 2;
 }
@@ -13,10 +14,10 @@ FeaturesMatcher::FeaturesMatcher()
 void FeaturesMatcher::prepMatcher(TrackerFeatures *objectFeatures)
 {
     matcher->clear();
-    vector<Mat> descriptorVector;
+    vector<GpuMat> descriptorVector;
     descriptorVector.push_back(objectFeatures->descriptors);
     matcher->add(descriptorVector);
-    matcher->train();
+//    matcher->train();
     this->objectFeatures = objectFeatures;
 }
 

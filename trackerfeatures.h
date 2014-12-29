@@ -8,27 +8,31 @@
 #include <opencv2/calib3d/calib3d.hpp>
 //#ifndef ANDROID
 #include "opencv2/nonfree/nonfree.hpp"
+#include "opencv2/nonfree/gpu.hpp"
+#include "opencv2/nonfree/features2d.hpp"
+#include "opencv2/gpu/gpu.hpp"
 //#endif
 #include <opencv2/ml/ml.hpp>
 
 using namespace cv;
 using namespace std;
+using namespace cv::gpu;
 
 class TrackerFeatures
 {
 public:
     TrackerFeatures();
-    void detect(Mat);
+    void detect(GpuMat);
 
     vector<KeyPoint> keyPoints;
-    Mat descriptors;
-    Mat image;
+    GpuMat descriptors;
+    GpuMat image;
 
 private:
 //#ifdef ANDROID
 //    static ORB featureDetector;
 //#else
-    static SURF featureDetector;
+    static SURF_GPU featureDetector;
 //#endif
 
 };

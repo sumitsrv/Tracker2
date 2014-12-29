@@ -27,11 +27,11 @@ private slots:
 
 private:
     Ui::TrackerMainWindow *ui;
-    cv::VideoCapture mCapture;
+    VideoCapture mCapture;
     int timerId;
     string fileRootPath;
-    cv::Mat objectImg;
-    cv::Mat sceneImg;
+    GpuMat objectImg;
+    GpuMat sceneImg;
     FeaturesMatcher *featuresMatcher;
     bool track;
 

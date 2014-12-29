@@ -3,7 +3,7 @@
 ImageViewer::ImageViewer(QWidget *parent) : QWidget(parent)
 {}
 
-bool ImageViewer::showImage( cv::Mat image )
+bool ImageViewer::showImage( Mat image )
 {
     switch (image.type()) {
     case CV_8UC1:

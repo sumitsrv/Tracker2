@@ -5,6 +5,7 @@
 
 using namespace cv;
 using namespace std;
+using namespace cv::gpu;
 
 class FeaturesMatcher
 {
@@ -17,9 +18,10 @@ public:
     TrackerFeatures *sceneFeatures;
 
 private:
-    FlannBasedMatcher *matcher;
+//    FlannBasedMatcher *matcher;
+    BFMatcher_GPU *matcher;
     vector<vector<DMatch> > matches;
-    vector<Mat> mask;
+    vector<GpuMat> mask;
     int k;
     TrackerFeatures *objectFeatures;
 };
